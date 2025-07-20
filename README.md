@@ -6,7 +6,7 @@
 
 # 🏥 HealthTrack Appointment System
 
-A full-stack MERN application for managing clinic appointments, with robust testing and debugging strategies.
+A full-stack MERN application for managing clinic appointments, with robust testing, debugging, and fully responsive design for both desktop and mobile.
 
 ---
 
@@ -18,6 +18,11 @@ A full-stack MERN application for managing clinic appointments, with robust test
 - Clinic management
 - Automated reminders (future scope)
 - Comprehensive unit, integration, and end-to-end testing
+- **Fully responsive UI:**
+  - Sidebar and main content adapt to all screen sizes
+  - All tables become cards on mobile
+  - Forms and dropdowns stack vertically on mobile
+  - Quick links with icons, stacked for mobile usability
 
 ---
 
@@ -35,7 +40,7 @@ clinic-appointment-reminder-system/
 ├── server/         # Express backend (Jest, Supertest, MongoDB)
 │   ├── controllers/
 │   ├── models/
-│   ├─��� routes/
+│   ├── routes/
 │   ├── tests/
 │   ├── coverage/
 │   └── ...
@@ -100,6 +105,16 @@ cd ../server && pnpm install
 
 ---
 
+## 📱 Responsive Design Highlights
+
+- **Sidebar:** Collapses to icons on mobile, expands on desktop
+- **Main Content:** Always visible, never overlapped by sidebar
+- **Tables:** Become cards on mobile for patients, clinics, appointments
+- **Forms & Dropdowns:** Stack vertically on mobile, row on desktop
+- **Quick Links:** Stacked with icons for mobile, grid/row for desktop
+
+---
+
 ## 📸 Coverage Reports
 
 - **Client Coverage:**
@@ -117,7 +132,7 @@ cd ../server && pnpm install
 
 - [x] All tests passing (unit, integration, E2E)
 - [x] Coverage reports/screenshots included
-- [x] Documentation of testing and debugging strategies
+- [x] Documentation of testing, debugging, and responsive design
 - [x] `.gitignore` excludes test files, node_modules, and secrets
 - [x] Regular commits pushed to GitHub Classroom repo
 
