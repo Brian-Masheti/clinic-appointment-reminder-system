@@ -1,0 +1,42 @@
+# Ignore all node_modules folders
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Ignore all test files and test directories
+**/*.test.js
+**/*.test.jsx
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.jsx
+**/*.spec.ts
+**/*.spec.tsx
+**/*.cy.js
+**/__tests__/
+server/tests/
+
+# Ignore coverage reports
+coverage/
+client/coverage/
+server/coverage/
+
+# Ignore environment files
+.env
+.env.*
+client/.env
+server/.env
+
+# Ignore lock files (optional, if you don't want to track them)
+client/pnpm-lock.yaml
+server/pnpm-lock.yaml
+pnpm-lock.yaml
+pnpm-lock.yaml.346084247
+pnpm-workspace.yaml
+
+# Ignore logs
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
