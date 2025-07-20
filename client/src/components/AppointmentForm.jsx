@@ -40,12 +40,14 @@ export default function AppointmentForm({ doctorId, clinics, patientId, onCreate
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4">
-      <h2 className="text-lg font-bold mb-2">Schedule Appointment</h2>
-      {error && <div className="text-red-500 mb-2">{error}</div>}
-      {success && <div className="text-green-600 mb-2">{success}</div>}
+    <form onSubmit={handleSubmit} className="mb-4 flex flex-col md:flex-row md:items-end gap-2 md:gap-4">
+      <div className="flex flex-col w-full md:w-auto">
+        <h2 className="text-lg font-bold mb-2">Schedule Appointment</h2>
+        {error && <div className="text-red-500 mb-2">{error}</div>}
+        {success && <div className="text-green-600 mb-2">{success}</div>}
+      </div>
       <select
-        className="border p-2 mr-2 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
+        className="border p-2 w-full max-w-full md:w-auto md:max-w-xs dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
         value={clinicId}
         onChange={e => setClinicId(e.target.value)}
         required
@@ -56,40 +58,44 @@ export default function AppointmentForm({ doctorId, clinics, patientId, onCreate
         ))}
       </select>
       {!patientId && (
-        <select
-          className="border p-2 mr-2 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
-          value={selectedPatientId}
-          onChange={e => setSelectedPatientId(e.target.value)}
-          required
-        >
-          <option value="">Select Patient</option>
-          {patients.map(patient => (
-            <option key={patient._id} value={patient._id}>{patient.name} ({patient.email})</option>
-          ))}
-        </select>
+        <div className="w-full md:w-auto max-w-xs overflow-hidden">
+          <select
+            className="border p-2 w-full max-w-xs truncate dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
+            value={selectedPatientId}
+            onChange={e => setSelectedPatientId(e.target.value)}
+            required
+          >
+            <option value="">Select Patient</option>
+            {patients.map(patient => (
+              <option key={patient._id} value={patient._id} className="truncate">
+                {patient.name}
+              </option>
+            ))}
+          </select>
+        </div>
       )}
       <input
-        className="border p-2 mr-2 bg-gray-100 text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 focus:bg-gray-200 dark:focus:bg-gray-700"
+        className="border p-2 w-full md:w-auto max-w-xs bg-gray-100 text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 focus:bg-gray-200 dark:focus:bg-gray-700"
         type="date"
         value={date}
         onChange={e => setDate(e.target.value)}
         required
       />
       <input
-        className="border p-2 mr-2 bg-gray-100 text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 focus:bg-gray-200 dark:focus:bg-gray-700"
+        className="border p-2 w-full md:w-auto max-w-xs bg-gray-100 text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 focus:bg-gray-200 dark:focus:bg-gray-700"
         type="time"
         value={time}
         onChange={e => setTime(e.target.value)}
         required
       />
       <textarea
-        className="border p-2 mr-2 w-full dark:bg-gray-800 dark:text-gray-100"
+        className="border p-2 w-full dark:bg-gray-800 dark:text-gray-100"
         placeholder="Notes (optional)"
         value={notes}
         onChange={e => setNotes(e.target.value)}
         rows={2}
       />
-      <button className="bg-green-500 text-white px-4 py-2 rounded" disabled={loading}>
+      <button className="bg-green-500 text-white px-4 py-2 rounded w-full md:w-auto" disabled={loading}>
         {loading ? 'Scheduling...' : 'Schedule'}
       </button>
     </form>

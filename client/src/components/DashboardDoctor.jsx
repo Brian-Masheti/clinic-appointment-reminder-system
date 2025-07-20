@@ -1,3 +1,5 @@
+y
+
 import React, { useEffect, useState } from 'react';
 import ClinicForm from './ClinicForm';
 import ClinicList from './ClinicList';
@@ -75,51 +77,90 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
         <h2 className="text-xl font-bold mb-4">Your Patients</h2>
         <LinkPatient doctorId={doctorId} clinics={clinics} onLinked={() => setRefresh(r => r + 1)} />
         <PatientForm doctorId={doctorId} onCreated={() => setRefresh(r => r + 1)} />
-        <table className="w-full text-left mt-4">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th className="py-2">Name</th>
-              <th className="py-2">Email</th>
-              <th className="py-2">Phone</th>
-              <th className="py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {patients.filter(p => !p.deleted).map(patient => (
-              <tr key={patient._id} className="border-b border-gray-700 hover:bg-gray-900">
-                <td className="py-2">{patient.name}</td>
-                <td className="py-2">{patient.email}</td>
-                <td className="py-2">{patient.phone || '-'}</td>
-                <td className="py-2 flex gap-2">
-                  <button
-                    title="Edit"
-                    className="text-blue-400 hover:text-blue-600"
-                    onClick={() => {
-                      setEditPatient(patient);
-                      setEditName(patient.name);
-                      setEditEmail(patient.email);
-                      setEditPhone(patient.phone || '');
-                    }}
-                  >
-                    <span role="img" aria-label="edit">✏️</span>
-                  </button>
-                  <button
-                    title="Delete"
-                    className="text-red-400 hover:text-red-600"
-                    onClick={async () => {
-                      if (window.confirm('Are you sure you want to delete this patient?')) {
-                        await import('../api').then(api => api.softDeletePatient(patient._id));
-                        setRefresh(r => r + 1);
-                      }
-                    }}
-                  >
-                    <span role="img" aria-label="delete">🗑️</span>
-                  </button>
-                </td>
+        {/* Table for desktop, cards for mobile */}
+        <div className="hidden md:block overflow-x-auto w-full">
+          <table className="w-full min-w-[600px] text-left mt-4 text-xs md:text-sm">
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="py-2">Name</th>
+                <th className="py-2">Email</th>
+                <th className="py-2">Phone</th>
+                <th className="py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {patients.filter(p => !p.deleted).map(patient => (
+                <tr key={patient._id} className="border-b border-gray-700 hover:bg-gray-900">
+                  <td className="py-2">{patient.name}</td>
+                  <td className="py-2">{patient.email}</td>
+                  <td className="py-2">{patient.phone || '-'}</td>
+                  <td className="py-2 flex gap-2">
+                    <button
+                      title="Edit"
+                      className="text-blue-400 hover:text-blue-600"
+                      onClick={() => {
+                        setEditPatient(patient);
+                        setEditName(patient.name);
+                        setEditEmail(patient.email);
+                        setEditPhone(patient.phone || '');
+                      }}
+                    >
+                      <span role="img" aria-label="edit">✏️</span>
+                    </button>
+                    <button
+                      title="Delete"
+                      className="text-red-400 hover:text-red-600"
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to delete this patient?')) {
+                          await import('../api').then(api => api.softDeletePatient(patient._id));
+                          setRefresh(r => r + 1);
+                        }
+                      }}
+                    >
+                      <span role="img" aria-label="delete">🗑️</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Cards for mobile */}
+        <div className="md:hidden grid gap-4 mt-4">
+          {patients.filter(p => !p.deleted).map(patient => (
+            <div key={patient._id} className="bg-gray-900 rounded-lg p-4 shadow flex flex-col gap-1">
+              <div className="font-bold text-blue-300">{patient.name}</div>
+              <div className="text-xs text-gray-400">Email: {patient.email}</div>
+              <div className="text-xs text-gray-400">Phone: {patient.phone || '-'}</div>
+              <div className="flex gap-2 mt-2">
+                <button
+                  title="Edit"
+                  className="text-blue-400 hover:text-blue-600"
+                  onClick={() => {
+                    setEditPatient(patient);
+                    setEditName(patient.name);
+                    setEditEmail(patient.email);
+                    setEditPhone(patient.phone || '');
+                  }}
+                >
+                  <span role="img" aria-label="edit">✏️</span>
+                </button>
+                <button
+                  title="Delete"
+                  className="text-red-400 hover:text-red-600"
+                  onClick={async () => {
+                    if (window.confirm('Are you sure you want to delete this patient?')) {
+                      await import('../api').then(api => api.softDeletePatient(patient._id));
+                      setRefresh(r => r + 1);
+                    }
+                  }}
+                >
+                  <span role="img" aria-label="delete">🗑️</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
         {editPatient && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-gray-900 p-6 rounded shadow-lg w-full max-w-md">
@@ -164,65 +205,66 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
       </div>
     );
   }
-  // (removed duplicate, now at top)
   if (section === 'clinics') {
     return (
       <div className="bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-xl font-bold mb-4">Your Clinics</h2>
         <ClinicForm doctorId={doctorId} onCreated={() => setRefresh(r => r + 1)} />
-        <table className="w-full text-left mt-4">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th className="py-2">Name</th>
-              <th className="py-2">Address</th>
-              <th className="py-2">Phone</th>
-              <th className="py-2">Email</th>
-              <th className="py-2">Description</th>
-              <th className="py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clinics.filter(clinic => !clinic.deleted).map(clinic => (
-              <tr key={clinic._id} className="border-b border-gray-700 hover:bg-gray-900">
-                <td className="py-2">{clinic.name}</td>
-                <td className="py-2">{clinic.address}</td>
-                <td className="py-2">{clinic.phone || '-'}</td>
-                <td className="py-2">{clinic.email || '-'}</td>
-                <td className="py-2">{clinic.description}</td>
-                <td className="py-2 flex gap-2">
-                  <button
-                    title="Edit"
-                    className="text-blue-400 hover:text-blue-600"
-                    onClick={() => {
-                      setEditClinic(clinic);
-                      setEditClinicForm({
-                        name: clinic.name,
-                        address: clinic.address,
-                        phone: clinic.phone,
-                        email: clinic.email,
-                        description: clinic.description,
-                      });
-                    }}
-                  >
-                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z"/></svg>
-                  </button>
-                  <button
-                    title="Delete"
-                    className="text-red-400 hover:text-red-600"
-                    onClick={async () => {
-                      if (window.confirm('Are you sure you want to delete this clinic?')) {
-                        await import('../api').then(api => api.softDeleteClinic(clinic._id));
-                        setRefresh(r => r + 1);
-                      }
-                    }}
-                  >
-                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
-                  </button>
-                </td>
+        <div className="overflow-x-auto w-full">
+          <table className="w-full min-w-[600px] text-left mt-4 text-xs md:text-sm">
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="py-2">Name</th>
+                <th className="py-2">Address</th>
+                <th className="py-2">Phone</th>
+                <th className="py-2">Email</th>
+                <th className="py-2">Description</th>
+                <th className="py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clinics.filter(clinic => !clinic.deleted).map(clinic => (
+                <tr key={clinic._id} className="border-b border-gray-700 hover:bg-gray-900">
+                  <td className="py-2">{clinic.name}</td>
+                  <td className="py-2">{clinic.address}</td>
+                  <td className="py-2">{clinic.phone || '-'}</td>
+                  <td className="py-2">{clinic.email || '-'}</td>
+                  <td className="py-2">{clinic.description}</td>
+                  <td className="py-2 flex gap-2">
+                    <button
+                      title="Edit"
+                      className="text-blue-400 hover:text-blue-600"
+                      onClick={() => {
+                        setEditClinic(clinic);
+                        setEditClinicForm({
+                          name: clinic.name,
+                          address: clinic.address,
+                          phone: clinic.phone,
+                          email: clinic.email,
+                          description: clinic.description,
+                        });
+                      }}
+                    >
+                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z"/></svg>
+                    </button>
+                    <button
+                      title="Delete"
+                      className="text-red-400 hover:text-red-600"
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to delete this clinic?')) {
+                          await import('../api').then(api => api.softDeleteClinic(clinic._id));
+                          setRefresh(r => r + 1);
+                        }
+                      }}
+                    >
+                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {/* Edit Clinic Modal */}
         {editClinic && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -287,10 +329,10 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
     return (
       <div className="bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-xl font-bold mb-4">Appointments</h2>
-        <div className="mb-4">
-          <label className="mr-2 text-gray-200">Filter by Clinic:</label>
+        <div className="mb-4 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          <label className="text-gray-200 md:mr-2">Filter by Clinic:</label>
           <select
-            className="border p-2 rounded dark:bg-gray-800 dark:text-gray-100"
+            className="border p-2 rounded dark:bg-gray-800 dark:text-gray-100 w-full md:w-auto"
             value={selectedClinic}
             onChange={e => setSelectedClinic(e.target.value)}
           >
@@ -300,56 +342,124 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
             ))}
           </select>
         </div>
-        <AppointmentForm doctorId={doctorId} clinics={clinics} onCreated={() => setRefresh(r => r + 1)} />
-        <table className="w-full text-left mt-4">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th className="py-2">Clinic</th>
-              <th className="py-2">Patient</th>
-              <th className="py-2">Date</th>
-              <th className="py-2">Time</th>
-              <th className="py-2">Notes</th>
-              <th className="py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.filter(appt => !appt.deleted && (!selectedClinic || appt.clinicId?._id === selectedClinic)).map(appt => (
-              <tr key={appt._id} className="border-b border-gray-700 hover:bg-gray-900">
-                <td className="py-2">{appt.clinicId?.name || '-'}</td>
-                <td className="py-2">{appt.patientId?.name || '-'}</td>
-                <td className="py-2">{appt.date ? new Date(appt.date).toLocaleDateString() : '-'}</td>
-                <td className="py-2">{appt.time}</td>
-                <td className="py-2">{appt.notes || '-'}</td>
-                <td className="py-2 flex gap-2">
-                  <button
-                    title="Edit"
-                    className="text-blue-400 hover:text-blue-600"
-                    onClick={() => {
-                      setEditAppt(appt);
-                      setEditApptDate(appt.date ? appt.date.slice(0, 10) : '');
-                      setEditApptTime(appt.time || '');
-                      setEditApptNotes(appt.notes || '');
-                    }}
-                  >
-                    <span role="img" aria-label="edit">✏️</span>
-                  </button>
-                  <button
-                    title="Delete"
-                    className="text-red-400 hover:text-red-600"
-                    onClick={async () => {
-                      if (window.confirm('Are you sure you want to delete this appointment?')) {
-                        await import('../api').then(api => api.softDeleteAppointment(appt._id));
-                        setRefresh(r => r + 1);
-                      }
-                    }}
-                  >
-                    <span role="img" aria-label="delete">🗑️</span>
-                  </button>
-                </td>
-              </tr>
+        <div className="mb-4 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          <label className="text-gray-200 md:mr-2">Filter by Clinic:</label>
+          <select
+            className="border p-2 rounded dark:bg-gray-800 dark:text-gray-100 w-full md:w-auto"
+            value={selectedClinic}
+            onChange={e => setSelectedClinic(e.target.value)}
+          >
+            <option value="">All Clinics</option>
+            {clinics.map(clinic => (
+              <option key={clinic._id} value={clinic._id}>{clinic.name}</option>
             ))}
-          </tbody>
-        </table>
+          </select>
+        </div>
+        <div className="mb-4">
+          <AppointmentForm doctorId={doctorId} clinics={clinics} onCreated={() => setRefresh(r => r + 1)} />
+        </div>
+        {/* Table for desktop, cards for mobile */}
+        <div className="hidden md:block overflow-x-auto w-full">
+          <table className="w-full min-w-[600px] text-left mt-4 text-xs md:text-sm">
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="py-2">Clinic</th>
+                <th className="py-2">Patient</th>
+                <th className="py-2">Date</th>
+                <th className="py-2">Time</th>
+                <th className="py-2">Notes</th>
+                <th className="py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {appointments.filter(appt => !appt.deleted && (!selectedClinic || appt.clinicId?._id === selectedClinic)).map(appt => (
+                <tr key={appt._id} className="border-b border-gray-700 hover:bg-gray-900">
+                  <td className="py-2">{appt.clinicId?.name || '-'}</td>
+                  <td className="py-2">{appt.patientId?.name || '-'}</td>
+                  <td className="py-2">{appt.date ? new Date(appt.date).toLocaleDateString() : '-'}</td>
+                  <td className="py-2">{appt.time}</td>
+                  <td className="py-2">{appt.notes || '-'}</td>
+                  <td className="py-2 flex gap-2">
+                    <button
+                      title="Edit"
+                      className="text-blue-400 hover:text-blue-600"
+                      onClick={() => {
+                        setEditAppt(appt);
+                        setEditApptDate(appt.date ? appt.date.slice(0, 10) : '');
+                        setEditApptTime(appt.time || '');
+                        setEditApptNotes(appt.notes || '');
+                      }}
+                    >
+                      <span role="img" aria-label="edit">✏️</span>
+                    </button>
+                    <button
+                      title="Delete"
+                      className="text-red-400 hover:text-red-600"
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to delete this appointment?')) {
+                          await import('../api').then(api => api.softDeleteAppointment(appt._id));
+                          setRefresh(r => r + 1);
+                        }
+                      }}
+                    >
+                      <span role="img" aria-label="delete">🗑️</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Cards for mobile */}
+        <div className="md:hidden grid gap-4 mt-4">
+          {appointments.filter(appt => !appt.deleted && (!selectedClinic || appt.clinicId?._id === selectedClinic)).map(appt => {
+            // Patient name logic
+            let patientName = '-';
+            if (appt.patientId && typeof appt.patientId === 'object' && appt.patientId.name) {
+              patientName = appt.patientId.name;
+            } else if (appt.patientId && typeof appt.patientId === 'string' && patients.length > 0) {
+              const found = patients.find(p => p._id === appt.patientId);
+              if (found) patientName = found.name;
+            }
+            return (
+              <div key={appt._id} className="bg-gray-900 rounded-lg p-4 shadow flex flex-col gap-1">
+                <div className="flex justify-between items-start mb-1">
+                  <div className="font-bold text-blue-300">{appt.clinicId?.name || '-'}</div>
+                  <div className="flex gap-2">
+                    <button
+                      title="Edit"
+                      className="text-blue-400 hover:text-blue-600"
+                      onClick={() => {
+                        setEditAppt(appt);
+                        setEditApptDate(appt.date ? appt.date.slice(0, 10) : '');
+                        setEditApptTime(appt.time || '');
+                        setEditApptNotes(appt.notes || '');
+                      }}
+                    >
+                      <span role="img" aria-label="edit">✏️</span>
+                    </button>
+                    <button
+                      title="Delete"
+                      className="text-red-400 hover:text-red-600"
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to delete this appointment?')) {
+                          await import('../api').then(api => api.softDeleteAppointment(appt._id));
+                          setRefresh(r => r + 1);
+                        }
+                      }}
+                    >
+                      <span role="img" aria-label="delete">🗑️</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400">Patient: {patientName}</div>
+                <div className="text-xs text-gray-400">Date: {appt.date ? new Date(appt.date).toLocaleDateString() : '-'}</div>
+                <div className="text-xs text-gray-400">Time: {appt.time}</div>
+                <div className="text-xs text-gray-400">Notes: {appt.notes || '-'}</div>
+              </div>
+            );
+          })}
+        </div>
         {editAppt && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-gray-900 p-6 rounded shadow-lg w-full max-w-md">

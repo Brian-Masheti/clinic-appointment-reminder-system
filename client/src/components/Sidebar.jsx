@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 
 // SVG icon components
@@ -31,42 +31,74 @@ const icons = {
 
 export default function Sidebar({ section, setSection, collapsed, setCollapsed }) {
   const { user, logout } = useUser();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Collapse sidebar after menu item click on mobile
+  const handleMenuClick = (sectionName) => {
+    setSection(sectionName);
+    if (window.innerWidth < 768) {
+      setCollapsed(true);
+      setMobileOpen(false);
+    }
+  };
+
+  // Responsive sidebar: collapsed by default on mobile, expands with hamburger
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setCollapsed(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setCollapsed]);
+
   return (
-    <aside
-      className={`h-screen ${collapsed ? 'w-16' : 'w-56'} bg-gray-100 dark:bg-gray-950 p-4 flex flex-col justify-between border-r border-gray-300 dark:border-gray-800 shadow-md z-20 transition-all duration-200`}
-      onMouseEnter={() => setCollapsed(false)}
-      onMouseLeave={() => setCollapsed(true)}
-    >
-      <div>
-        {/* Hamburger icon always at the top when collapsed */}
-        {collapsed && (
-          <div className="flex justify-center mb-8" title="Expand sidebar">
-            {icons.hamburger}
-          </div>
-        )}
-        {!collapsed && (
-          <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Menu</h2>
-        )}
-        <nav>
-          <ul className="space-y-2">
-            <li>
-              <button
-                onClick={() => setSection('dashboard')}
-                className={`w-full flex items-center gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='dashboard'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-2 py-2`}
-                title="Dashboard"
-              >
-                {icons.dashboard}
-                {!collapsed && 'Dashboard'}
-              </button>
-            </li>
+    <>
+      {/* Hamburger for mobile */}
+      <button
+        className="md:hidden fixed top-2 left-2 z-30 bg-gray-200 dark:bg-gray-800 p-1 rounded shadow"
+        onClick={() => { setCollapsed(!collapsed); setMobileOpen(!mobileOpen); }}
+        aria-label="Toggle sidebar"
+      >
+        <span className="w-5 h-5">{icons.hamburger}</span>
+      </button>
+      <aside
+        className={`h-screen fixed md:static top-0 left-0 ${collapsed ? 'w-12' : 'w-44'} md:${collapsed ? 'w-16' : 'w-56'} bg-gray-100 dark:bg-gray-950 p-2 md:p-4 flex flex-col justify-between border-r border-gray-300 dark:border-gray-800 shadow-md z-20 transition-all duration-200 ${mobileOpen ? '' : 'md:block'} ${mobileOpen ? 'block' : 'hidden md:block'}`}
+        onMouseEnter={() => { if (window.innerWidth >= 768) setCollapsed(false); }}
+        onMouseLeave={() => { if (window.innerWidth >= 768) setCollapsed(true); }}
+      >
+        <div>
+          {/* Hamburger icon always at the top when collapsed (desktop) */}
+          {collapsed && (
+            <div className="flex justify-center mb-8 md:mb-8" title="Expand sidebar">
+              {icons.hamburger}
+            </div>
+          )}
+          {!collapsed && (
+            <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100 md:block hidden">Menu</h2>
+          )}
+          <nav>
+            <ul className="space-y-2 mt-12 md:mt-0">
+              <li>
+                <button
+                  onClick={() => handleMenuClick('dashboard')}
+                  className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='dashboard'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
+                  title="Dashboard"
+                >
+                  <span className="w-5 h-5 md:w-6 md:h-6">{icons.dashboard}</span>
+                  {!collapsed && 'Dashboard'}
+                </button>
+              </li>
             {user?.role === 'doctor' && (
               <li>
                 <button
-                  onClick={() => setSection('patients')}
-                  className={`w-full flex items-center gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='patients'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-2 py-2`}
+                  onClick={() => handleMenuClick('patients')}
+                  className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='patients'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
                   title="Patients"
                 >
-                  {icons.patients}
+                  <span className="w-5 h-5 md:w-6 md:h-6">{icons.patients}</span>
                   {!collapsed && 'Patients'}
                 </button>
               </li>
@@ -74,11 +106,11 @@ export default function Sidebar({ section, setSection, collapsed, setCollapsed }
             {user?.role === 'doctor' && (
               <li>
                 <button
-                  onClick={() => setSection('clinics')}
-                  className={`w-full flex items-center gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='clinics'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-2 py-2`}
+                  onClick={() => handleMenuClick('clinics')}
+                  className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='clinics'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
                   title="Clinics"
                 >
-                  {icons.clinics}
+                  <span className="w-5 h-5 md:w-6 md:h-6">{icons.clinics}</span>
                   {!collapsed && 'Clinics'}
                 </button>
               </li>
@@ -86,11 +118,11 @@ export default function Sidebar({ section, setSection, collapsed, setCollapsed }
             {user?.role === 'doctor' && (
               <li>
                 <button
-                  onClick={() => setSection('appointments')}
-                  className={`w-full flex items-center gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='appointments'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-2 py-2`}
+                  onClick={() => handleMenuClick('appointments')}
+                  className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='appointments'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
                   title="Appointments"
                 >
-                  {icons.appointments}
+                  <span className="w-5 h-5 md:w-6 md:h-6">{icons.appointments}</span>
                   {!collapsed && 'Appointments'}
                 </button>
               </li>
@@ -98,11 +130,11 @@ export default function Sidebar({ section, setSection, collapsed, setCollapsed }
             {user?.role === 'patient' && (
               <li>
                 <button
-                  onClick={() => setSection('my-appointments')}
-                  className={`w-full flex items-center gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='my-appointments'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-2 py-2`}
+                  onClick={() => handleMenuClick('my-appointments')}
+                  className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='my-appointments'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
                   title="My Appointments"
                 >
-                  {icons.myAppointments}
+                  <span className="w-5 h-5 md:w-6 md:h-6">{icons.myAppointments}</span>
                   {!collapsed && 'My Appointments'}
                 </button>
               </li>
@@ -112,22 +144,23 @@ export default function Sidebar({ section, setSection, collapsed, setCollapsed }
       </div>
       <div className="space-y-2 flex flex-col items-start">
         <button
-          className={`w-full flex items-center gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='profile'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-2 py-2`}
-          onClick={() => setSection('profile')}
+          className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='profile'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
+          onClick={() => handleMenuClick('profile')}
           title="Profile"
         >
-          {icons.profile}
+          <span className="w-5 h-5 md:w-6 md:h-6">{icons.profile}</span>
           {!collapsed && 'Profile'}
         </button>
         <button
-          className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-start px-4'} gap-3 bg-gray-300 dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-2 rounded transition-colors duration-150 hover:bg-red-500 hover:text-white mt-4`}
+          className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-start px-2 md:px-4'} gap-2 md:gap-3 bg-gray-300 dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 md:py-2 rounded transition-colors duration-150 hover:bg-red-500 hover:text-white mt-4 text-xs md:text-base`}
           onClick={logout}
           title="Logout"
         >
-          {icons.logout}
+          <span className="w-5 h-5 md:w-6 md:h-6">{icons.logout}</span>
           {!collapsed && 'Logout'}
         </button>
       </div>
     </aside>
+    </>
   );
 }
