@@ -28,9 +28,9 @@ function Dashboard() {
     <div className="flex min-h-screen bg-gray-900">
       <Sidebar section={section} setSection={setSection} collapsed={collapsed} setCollapsed={setCollapsed} />
       <main
-        className={`flex-1 p-8 text-gray-100 space-y-8 transition-all duration-200
-          ${collapsed ? 'ml-16' : 'ml-56'}
-          md:ml-56
+        className={`flex-1 p-4 md:p-8 text-gray-100 space-y-8 transition-all duration-200
+          ${collapsed ? 'ml-12' : 'ml-44'}
+          md:${collapsed ? 'ml-16' : 'ml-56'}
         `}
         style={{ minHeight: '100vh' }}
       >

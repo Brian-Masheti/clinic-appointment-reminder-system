@@ -1,5 +1,3 @@
-y
-
 import React, { useEffect, useState } from 'react';
 import ClinicForm from './ClinicForm';
 import ClinicList from './ClinicList';
@@ -52,11 +50,23 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
     return (
       <div className="bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-xl font-bold mb-4">Doctor Dashboard</h2>
-        <div className="flex flex-wrap gap-4 mb-8 justify-center">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow" onClick={() => window.scrollTo(0,0)}>Overview</button>
-          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow" onClick={() => setSection ? setSection('clinics') : window.dispatchEvent(new CustomEvent('sidebar-section', { detail: 'clinics' }))}>Clinics</button>
-          <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded shadow" onClick={() => setSection ? setSection('patients') : window.dispatchEvent(new CustomEvent('sidebar-section', { detail: 'patients' }))}>Patients</button>
-          <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow" onClick={() => setSection ? setSection('appointments') : window.dispatchEvent(new CustomEvent('sidebar-section', { detail: 'appointments' }))}>Appointments</button>
+        <div className="grid grid-cols-1 gap-2 mb-8 md:grid-cols-2 md:gap-4 md:justify-center">
+          <button className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white w-full py-3 px-4 rounded shadow text-base md:w-auto md:justify-center" onClick={() => window.scrollTo(0,0)}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 17v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Overview
+          </button>
+          <button className="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white w-full py-3 px-4 rounded shadow text-base md:w-auto md:justify-center" onClick={() => setSection ? setSection('clinics') : window.dispatchEvent(new CustomEvent('sidebar-section', { detail: 'clinics' }))}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M3 11h18"/></svg>
+            Clinics
+          </button>
+          <button className="flex items-center gap-3 bg-yellow-600 hover:bg-yellow-700 text-white w-full py-3 px-4 rounded shadow text-base md:w-auto md:justify-center" onClick={() => setSection ? setSection('patients') : window.dispatchEvent(new CustomEvent('sidebar-section', { detail: 'patients' }))}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0 1 13 0"/></svg>
+            Patients
+          </button>
+          <button className="flex items-center gap-3 bg-purple-600 hover:bg-purple-700 text-white w-full py-3 px-4 rounded shadow text-base md:w-auto md:justify-center" onClick={() => setSection ? setSection('appointments') : window.dispatchEvent(new CustomEvent('sidebar-section', { detail: 'appointments' }))}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+            Appointments
+          </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {clinicStats.map(clinic => (
@@ -210,7 +220,8 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
       <div className="bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-xl font-bold mb-4">Your Clinics</h2>
         <ClinicForm doctorId={doctorId} onCreated={() => setRefresh(r => r + 1)} />
-        <div className="overflow-x-auto w-full">
+        {/* Table for desktop, cards for mobile */}
+        <div className="hidden md:block overflow-x-auto w-full">
           <table className="w-full min-w-[600px] text-left mt-4 text-xs md:text-sm">
             <thead>
               <tr className="border-b border-gray-700">
@@ -264,6 +275,50 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
               ))}
             </tbody>
           </table>
+        </div>
+        {/* Cards for mobile */}
+        <div className="md:hidden grid gap-4 mt-4">
+          {clinics.filter(clinic => !clinic.deleted).map(clinic => (
+            <div key={clinic._id} className="bg-gray-900 rounded-lg p-4 shadow flex flex-col gap-1">
+              <div className="flex justify-between items-start mb-1">
+                <div className="font-bold text-blue-300">{clinic.name}</div>
+                <div className="flex gap-2">
+                  <button
+                    title="Edit"
+                    className="text-blue-400 hover:text-blue-600"
+                    onClick={() => {
+                      setEditClinic(clinic);
+                      setEditClinicForm({
+                        name: clinic.name,
+                        address: clinic.address,
+                        phone: clinic.phone,
+                        email: clinic.email,
+                        description: clinic.description,
+                      });
+                    }}
+                  >
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z"/></svg>
+                  </button>
+                  <button
+                    title="Delete"
+                    className="text-red-400 hover:text-red-600"
+                    onClick={async () => {
+                      if (window.confirm('Are you sure you want to delete this clinic?')) {
+                        await import('../api').then(api => api.softDeleteClinic(clinic._id));
+                        setRefresh(r => r + 1);
+                      }
+                    }}
+                  >
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div className="text-xs text-gray-400">Address: {clinic.address}</div>
+              <div className="text-xs text-gray-400">Phone: {clinic.phone || '-'}</div>
+              <div className="text-xs text-gray-400">Email: {clinic.email || '-'}</div>
+              <div className="text-xs text-gray-400">Description: {clinic.description}</div>
+            </div>
+          ))}
         </div>
         {/* Edit Clinic Modal */}
         {editClinic && (

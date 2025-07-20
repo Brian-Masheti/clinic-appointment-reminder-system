@@ -38,14 +38,14 @@ export default function LinkPatient({ doctorId, clinics, onLinked }) {
       <h3 className="font-bold mb-2">Link Patient to Clinic</h3>
       {error && <div className="text-red-500 mb-2">{error}</div>}
       {success && <div className="text-green-600 mb-2">{success}</div>}
-      <div className="flex gap-2 mb-2">
-        <select value={selectedPatient} onChange={e => setSelectedPatient(e.target.value)} className="border p-2 rounded w-1/2 bg-gray-100 dark:bg-gray-800 dark:text-gray-100">
+      <div className="flex flex-col gap-2 md:flex-row mb-2">
+        <select value={selectedPatient} onChange={e => setSelectedPatient(e.target.value)} className="border p-2 rounded w-full md:w-1/2 bg-gray-100 dark:bg-gray-800 dark:text-gray-100">
           <option value="">{patients.length === 0 ? 'No patients available' : 'Select Patient'}</option>
           {patients.map(p => (
             <option key={p._id} value={p._id}>{p.name} ({p.email})</option>
           ))}
         </select>
-        <select value={selectedClinic} onChange={e => setSelectedClinic(e.target.value)} className="border p-2 rounded w-1/2 bg-gray-100 dark:bg-gray-800 dark:text-gray-100">
+        <select value={selectedClinic} onChange={e => setSelectedClinic(e.target.value)} className="border p-2 rounded w-full md:w-1/2 bg-gray-100 dark:bg-gray-800 dark:text-gray-100">
           <option value="">Select Clinic</option>
           {clinics.map(c => (
             <option key={c._id} value={c._id}>{c.name}</option>
