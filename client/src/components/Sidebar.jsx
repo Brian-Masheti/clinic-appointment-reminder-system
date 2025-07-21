@@ -65,11 +65,11 @@ export default function Sidebar({ section, setSection, collapsed, setCollapsed }
         <span className="w-5 h-5">{icons.hamburger}</span>
       </button>
       <aside
-        className={`h-screen fixed md:static top-0 left-0 ${collapsed ? 'w-12' : 'w-44'} md:${collapsed ? 'w-16' : 'w-56'} bg-gray-100 dark:bg-gray-950 p-2 md:p-4 flex flex-col justify-between border-r border-gray-300 dark:border-gray-800 shadow-md z-20 transition-all duration-200 ${mobileOpen ? '' : 'md:block'} ${mobileOpen ? 'block' : 'hidden md:block'}`}
+        className={`h-screen fixed md:static top-0 left-0 ${collapsed ? 'w-12' : 'w-44'} md:${collapsed ? 'w-16' : 'w-56'} bg-gray-100 dark:bg-gray-950 p-2 md:p-4 flex flex-col h-screen border-r border-gray-300 dark:border-gray-800 shadow-md z-20 transition-all duration-200 ${mobileOpen ? '' : 'md:block'} ${mobileOpen ? 'block' : 'hidden md:block'}`}
         onMouseEnter={() => { if (window.innerWidth >= 768) setCollapsed(false); }}
         onMouseLeave={() => { if (window.innerWidth >= 768) setCollapsed(true); }}
       >
-        <div>
+        <div className="flex-1 flex flex-col">
           {/* Hamburger icon always at the top when collapsed (desktop) */}
           {collapsed && (
             <div className="flex justify-center mb-8 md:mb-8" title="Expand sidebar">
@@ -141,26 +141,26 @@ export default function Sidebar({ section, setSection, collapsed, setCollapsed }
             )}
           </ul>
         </nav>
-      </div>
-      <div className="space-y-2 flex flex-col items-start">
-        <button
-          className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='profile'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
-          onClick={() => handleMenuClick('profile')}
-          title="Profile"
-        >
-          <span className="w-5 h-5 md:w-6 md:h-6">{icons.profile}</span>
-          {!collapsed && 'Profile'}
-        </button>
-        <button
-          className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-start px-2 md:px-4'} gap-2 md:gap-3 bg-gray-300 dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 md:py-2 rounded transition-colors duration-150 hover:bg-red-500 hover:text-white mt-4 text-xs md:text-base`}
-          onClick={logout}
-          title="Logout"
-        >
-          <span className="w-5 h-5 md:w-6 md:h-6">{icons.logout}</span>
-          {!collapsed && 'Logout'}
-        </button>
-      </div>
-    </aside>
+        </div>
+        <div className="space-y-2 flex flex-col items-start w-full mb-2 md:mb-4">
+          <button
+            className={`w-full flex items-center gap-2 md:gap-3 text-left text-gray-900 dark:text-gray-100 ${section==='profile'?'font-bold':''} justify-${collapsed ? 'center' : 'start'} transition-colors duration-150 hover:bg-blue-500 hover:text-white rounded px-1.5 py-1.5 md:px-2 md:py-2 text-xs md:text-base`}
+            onClick={() => handleMenuClick('profile')}
+            title="Profile"
+          >
+            <span className="w-5 h-5 md:w-6 md:h-6">{icons.profile}</span>
+            {!collapsed && 'Profile'}
+          </button>
+          <button
+            className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-start px-2 md:px-4'} gap-2 md:gap-3 bg-gray-300 dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 md:py-2 rounded transition-colors duration-150 hover:bg-red-500 hover:text-white mt-4 text-xs md:text-base`}
+            onClick={logout}
+            title="Logout"
+          >
+            <span className="w-5 h-5 md:w-6 md:h-6">{icons.logout}</span>
+            {!collapsed && 'Logout'}
+          </button>
+        </div>
+      </aside>
     </>
   );
 }

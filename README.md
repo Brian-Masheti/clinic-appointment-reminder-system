@@ -143,7 +143,3 @@ cd ../server && pnpm install
 - Brian Masheti
 
 ---
-
-## 📝 License
-
-This project is for educational purposes (PLP Feb 2025 Cohort).
