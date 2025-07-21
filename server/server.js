@@ -12,7 +12,26 @@ connectDB();
 
 app.use(helmet());
 app.use(morgan('combined'));
-app.use(cors());
+
+// Only allow requests from these origins (for security, do NOT use '*')
+const allowedOrigins = [
+  'http://localhost:5173', // Development Env.
+  'http://192.168.100.7:5173', // Development Env.
+  'https://clinic-appointment-reminder-system.vercel.app' // Production Env.
+];
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // Allow Postman/curl (no Origin header) and only allow browser requests from allowedOrigins
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'content-type,authorization',
+  })
+);
 app.use(express.json());
 
 // Routes
