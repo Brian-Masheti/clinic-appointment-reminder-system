@@ -397,19 +397,6 @@ export default function DashboardDoctor({ doctorId, section, setSection }) {
             ))}
           </select>
         </div>
-        <div className="mb-4 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-          <label className="text-gray-200 md:mr-2">Filter by Clinic:</label>
-          <select
-            className="border p-2 rounded dark:bg-gray-800 dark:text-gray-100 w-full md:w-auto"
-            value={selectedClinic}
-            onChange={e => setSelectedClinic(e.target.value)}
-          >
-            <option value="">All Clinics</option>
-            {clinics.map(clinic => (
-              <option key={clinic._id} value={clinic._id}>{clinic.name}</option>
-            ))}
-          </select>
-        </div>
         <div className="mb-4">
           <AppointmentForm doctorId={doctorId} clinics={clinics} onCreated={() => setRefresh(r => r + 1)} />
         </div>
