@@ -107,6 +107,15 @@ cd ../server && pnpm install
 
 ## 📱 Responsive Design Highlights
 
+- **Desktop View:**
+  <p align="center">
+    <img src="client/public/desktop.png" alt="Desktop Responsive View" width="600" />
+  </p>
+- **Mobile View:**
+  <p align="center">
+    <img src="client/public/mobile.png" alt="Mobile Responsive View" width="300" />
+  </p>
+
 - **Sidebar:** Collapses to icons on mobile, expands on desktop
 - **Main Content:** Always visible, never overlapped by sidebar
 - **Tables:** Become cards on mobile for patients, clinics, appointments
