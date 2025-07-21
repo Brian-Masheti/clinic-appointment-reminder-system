@@ -13,9 +13,17 @@ import PatientDashboard from './components/PatientDashboard';
 
 function Dashboard() {
   const { user } = useUser();
-  const [section, setSection] = useState('dashboard');
+  const [section, setSection] = useState(() => localStorage.getItem('dashboardSection') || 'dashboard');
   const [collapsed, setCollapsed] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+
+  // Persist section and scroll to top on change
+  const handleSetSection = (sec) => {
+    setSection(sec);
+    localStorage.setItem('dashboardSection', sec);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
     document.documentElement.classList.add('dark');
     if (showWelcome) {
@@ -26,7 +34,7 @@ function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-900">
-      <Sidebar section={section} setSection={setSection} collapsed={collapsed} setCollapsed={setCollapsed} />
+      <Sidebar section={section} setSection={handleSetSection} collapsed={collapsed} setCollapsed={setCollapsed} />
       <main
         className={`flex-1 p-4 md:p-8 text-gray-100 space-y-8 transition-all duration-200
           ${collapsed ? 'ml-12' : 'ml-44'}
@@ -41,7 +49,7 @@ function Dashboard() {
           {user?.role === 'doctor' && section === 'profile' && (
             <DoctorProfile doctorId={user.id} />
           )}
-          {user?.role === 'doctor' && section !== 'profile' && <DashboardDoctor doctorId={user.id} section={section} setSection={setSection} />}
+          {user?.role === 'doctor' && section !== 'profile' && <DashboardDoctor doctorId={user.id} section={section} setSection={handleSetSection} />}
           {user?.role === 'patient' && <PatientDashboard patientId={user.id} section={section} />}
         </div>
       </main>
